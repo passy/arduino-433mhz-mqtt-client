@@ -12,6 +12,7 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 #include <ESP8266WiFi.h>
+#include <RCSwitch.h>
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 #include "secrets.h"
@@ -21,7 +22,7 @@
 // the slider feed sets the PWM output of this pin
 #define PWMOUT 12
 
-/************ Global State (you don't need to change this!) ******************/
+/************ Global State ******************/
 
 // Create an ESP8266 WiFiClient class to connect to the MQTT server.
 WiFiClient client;
@@ -30,6 +31,8 @@ WiFiClient client;
 
 // Setup the MQTT client class by passing in the WiFi client and MQTT server and login details.
 Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_USERNAME, AIO_KEY);
+
+RCSwitch sender = RCSwitch();
 
 /****************************** Feeds ***************************************/
 
@@ -48,12 +51,12 @@ void setup() {
   pinMode(PWMOUT, OUTPUT);
 
   Serial.begin(115200);
-  delay(10);
-
-  Serial.println(F("Adafruit MQTT demo"));
+  sender.enableTransmit(16); // I hope this maps to D0.
+  sender.setProtocol(1);
+  sender.setPulseLength(187);
 
   // Connect to WiFi access point.
-  Serial.println(); Serial.println();
+  Serial.println();
   Serial.print("Connecting to ");
   Serial.println(WLAN_SSID);
 
@@ -91,9 +94,11 @@ void loop() {
       Serial.println((char *)onoffbutton.lastread);
       
       if (strcmp((char *)onoffbutton.lastread, "ON") == 0) {
+        sender.sendTriState("FFF0FFFF1001");
         digitalWrite(LED, LOW); 
       }
       if (strcmp((char *)onoffbutton.lastread, "OFF") == 0) {
+        sender.sendTriState("FFF0FFFF1010");
         digitalWrite(LED, HIGH); 
       }
     }
