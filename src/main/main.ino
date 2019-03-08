@@ -39,6 +39,7 @@ RCSwitch sender = RCSwitch();
 // Notice MQTT paths for AIO follow the form: <username>/feeds/<feedname>
 Adafruit_MQTT_Subscribe onoffbutton = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/onoff");
 Adafruit_MQTT_Subscribe slider = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/slider");
+Adafruit_MQTT_Subscribe zap = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/zap");
 
 /*************************** Sketch Code ************************************/
 
@@ -73,6 +74,7 @@ void setup() {
   // Setup MQTT subscription for onoff & slider feed.
   mqtt.subscribe(&onoffbutton);
   mqtt.subscribe(&slider);
+  mqtt.subscribe(&zap);
 }
 
 uint32_t x=0;
@@ -101,6 +103,14 @@ void loop() {
         sender.sendTriState("FFF0FFFF1010");
         digitalWrite(LED, HIGH); 
       }
+    }
+
+    if (subscription == &zap) {
+      Serial.print(F("Zap: "));
+      const char* val = (char *) zap.lastread;
+      Serial.println(val);
+
+      sender.sendTriState(val);
     }
     
     // check if its the slider feed
