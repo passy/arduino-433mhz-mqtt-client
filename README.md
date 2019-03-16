@@ -10,6 +10,9 @@ Register an Adafruit account, set up a feed (called "zap" in my setup),
 and fill in the `setup.h`. Flash onto a compatible WiFi-capable ES8266 Arduino.
 Enjoy.
 
+![arduino setup](assets/arduino.jpg)
+
+
 ## License
 
 Blue Oak Model License 1.0.0
