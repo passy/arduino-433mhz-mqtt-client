@@ -58,7 +58,6 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
-  // Setup MQTT subscription for onoff & slider feed.
   mqtt.subscribe(&zap);
 }
 
